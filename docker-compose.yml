@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    labels:
+      - "traefik.http.routers.dashboard.service=api@internal"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  training:
+    image: localhost:5000/mera/training
+    container_name: training
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.training.rule=(Host(`training.localhost`) && PathPrefix(`/training`))
+      - traefik.http.routers.training.entrypoints=web
+      - traefik.http.services.my-service.loadbalancer.server.port=3000

@@ -1,0 +1,10 @@
+build
+.cache
+public
+git
+.github
+.vscode
+# .yarn/cache
+.yarn/unplugged
+.yarn/install-state.gz
+README.md
